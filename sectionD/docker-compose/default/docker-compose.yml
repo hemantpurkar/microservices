@@ -1,0 +1,121 @@
+services:
+  configserver:
+    image: "hemantms/configserver:secD"
+    container_name: configserver-ms
+    ports:
+      - "8100:8100"
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+  
+  eurekaserver:
+    image: "hemantms/eurekaserver:secD"
+    container_name: eurekaserver-ms
+    ports:
+      - "8070:8070"
+    healthcheck:
+      test: "curl --fail --silent localhost:9100/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+    environment:
+      SPRING_APPLICATION_NAME: "eurekaserver"
+  
+  
+
+  accounts:
+    image: "hemantms/accounts:secD"
+    container_name: accounts-ms
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+    environment:
+      SPRING_APPLICATION_NAME: "eurekaserver"  
+    environment:
+      SPRING_APPLICATION_NAME: "accounts"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
+  loans:
+    image: "hemantms/loans:secD"
+    container_name: loans-ms
+    ports:
+      - "8090:8090"
+    healthcheck:
+      test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config  
+    environment:
+      SPRING_APPLICATION_NAME: "loans"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
+  cards:
+    image: "hemantms/cards:secD"
+    container_name: cards-ms
+    ports:
+      - "9000:9000"
+    healthcheck:
+      test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config  
+    environment:
+      SPRING_APPLICATION_NAME: "cards"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+      
+  gatewayserver:
+    image: "hemantms/gatewayserver:secD"
+    container_name: gatewayserver-ms
+    ports:
+      - "9200:9200"
+    depends_on:
+      accounts:
+        condition: service_healthy
+      loans:
+        condition: service_healthy
+      cards:
+        condition: service_healthy  
+    environment:
+      SPRING_APPLICATION_NAME: "gatewayserver"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config    
+
+networks:
+  myBankNetwork:
+    driver: "bridge"
