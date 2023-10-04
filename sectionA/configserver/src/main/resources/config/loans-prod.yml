@@ -1,0 +1,11 @@
+build:
+  version: "1.0"
+
+accounts:
+  message: "Hey, welcome to MyBank loans related Prod APIs"
+  contactDetails:
+    name: "John Doe - Product Owner"
+    email: "{cipher}06f40c6cd525c05e4c893bf6bb7b6b3b29cf757d13fae557b2800cd30845e7eed024331d7c7f46059b1a6e6a3da67f7a"
+  onCallSupport:
+    - (453) 392-4829
+    - (236) 203-0384
