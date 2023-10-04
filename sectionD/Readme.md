@@ -1,0 +1,2 @@
+Springboot, Microservices, Docker, Configserver, H2 Database CRUD Operations, Docker-compose, Eureka Discovery server-client, service registration,
+Gateway server, Cross cutting concerens (Routing, logging, security)
